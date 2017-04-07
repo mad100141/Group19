@@ -85,7 +85,7 @@ https://www.kaggle.com/worldbank/world-development-indicators
 
 (20 points)
 
-1. What variables have the strongest correlations with literacy rates?
+1. What variables have the strongest correlations with literacy rates? (variables like GDP, population, mortality rate, employment rate, etc)
   Correlation Graph
 2. How has migration changed and where are people migrating to and leaving from?
   Network diagram of transitions overlayed over  map of the world.
