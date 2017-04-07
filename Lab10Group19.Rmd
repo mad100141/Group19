@@ -110,14 +110,23 @@ Look up the help documentation for the following functions:  `pdf()`, `png()`, a
 
 (a)  What other functions are listed in the help file for `png()`?
 
+Other functions include bmp, jpeg, and tiff.
+
 (b)  How do you control the height and width of images with the `pdf()` function?  What are the units for these parameters?
+
+There are width and height parameters in the function that can be used to control the values. The units are inches, with a default value of 7.
 
 (c)  How do you control the height and width of images with the `png()` function?  What are the default units for these parameters?
 
+There are also height and width parameters in the png function. The default units is Pixels.
+
 (d)  What types of images can you save with the `ggsave()` function?  (Hint:  Look at the `device` parameter.)
+
+ggsave() can save eps/ps, tex (pictex), pdf, jpeg, tiff, png, bmp, svg and wmf. 
 
 (e)  What does the `dpi` parameter control in the `ggsave()` function?  What does `dpi` stand for?
 
+DPI stands for dots per inch. It is used to raster graphics. 
 
 ###  Sam Says
 
