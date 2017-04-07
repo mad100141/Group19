@@ -1,6 +1,6 @@
 ---
 title: "36-315 Lab 10"
-author: "ALL Group Member Names Here"
+author: "Group Number: 19, Names: Julien Naegeli, Alex Frazier, Johnny Wu, Maria Rodriguez: jnaegeli, afrazie1, johnnywu, mar1"
 date: "Due Friday, April 7th, 2017 (6:30pm)"
 output: 
   html_document:
@@ -42,11 +42,8 @@ Johnny lives in the weightroom.
 Julien's nickname is JpappyLonglegs.
 Alex plays the guitar.
 
-
 ***
 ***
-
-
 
 #  Problem 2
 
@@ -67,6 +64,16 @@ Alex plays the guitar.
 World Development Indicators
 https://www.kaggle.com/worldbank/world-development-indicators
 
+The World Development Indicators from the World Bank contains over a 
+thousand annual indicators of economic development from hundreds of 
+countries around the world.
+
+The World Development Indicators is a dataset consisting of 247 countries and 
+1,344 indicator variables. It is impossible to specify what each observation 
+corresponds to because there are so many but several categories observed are 
+economic measures like agricultural and industrial measures for land or CO2 emmisions and 
+more general measures like life expectancy, labor participation, literacy rates, 
+mortality rates, and income disparity.
 
 **Assignment**:  Choose your dataset for the Static Graphics Group Project.  Dataset suggestions, resources, and requirements are provided in the Static Graphics Group Project file on Blackboard.
 
@@ -79,13 +86,12 @@ https://www.kaggle.com/worldbank/world-development-indicators
 ***
 ***
 
-
-
 #  Problem 4
 
 (20 points)
 
-1. What variables have the strongest correlations with literacy rates? (variables like GDP, population, mortality rate, employment rate, etc)
+1. What variables have the strongest correlations with literacy rates? 
+  (variables like GDP, population, mortality rate, employment rate, etc)
   Correlation Graph
 2. How has migration changed and where are people migrating to and leaving from?
   Network diagram of transitions overlayed over  map of the world.
@@ -97,10 +103,8 @@ https://www.kaggle.com/worldbank/world-development-indicators
 **What you have to turn in**:  At least three ideas of questions you can anwer with your dataset, and how you might answer them graphically.  This may include specific ideas about the types of graphs you'll create, or simply sentences like "What is the relationship between the age of shark attack victims and the year in which the shark attack occured?  Does this change depending on the gender of the victim?"
 
 
-
 ***
 ***
-
 
 #  Problem 5
 
@@ -139,8 +143,6 @@ When adding graphs that you saved to your poster, avoid stretching them after in
 ***
 ***
 
-
-
 #  That was easy.  What do we do next?
 
 (a)  Start working on the graphs for your poster!  See the Static Graphics Group Project Information file for more information.
@@ -162,5 +164,4 @@ For those interested, here are some resources that help to explain how to use Gi
 +  [RStudio's Support Page](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
 +  [R Bloggers](https://www.r-bloggers.com/rstudio-and-github/)
 +  [Some Person's Blog](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/)
-
 
