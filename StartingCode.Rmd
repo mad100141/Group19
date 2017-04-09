@@ -1,0 +1,37 @@
+---
+title: "36-315"
+author: "Group Number: 19, Names: Julien Naegeli, Alex Frazier, Johnny Wu, Maria Rodriguez: jnaegeli, afrazie1, johnnywu, mar1"
+date: "Due Monday"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+
+---
+
+
+```{r}
+library(dplyr)
+library(readr)
+
+indicators <- read_csv("Indicators.csv")
+
+countsCountry <- indicators %>%
+  group_by(CountryCode, CountryName) %>%
+  summarise(NumIndicators = n_distinct(IndicatorName),
+            NumYears      = n_distinct(Year),
+            FirstYear     = min(Year),
+            LastYear      = max(Year))
+
+countsIndicate <- indicators %>%
+  group_by(IndicatorCode, IndicatorName) %>%
+  summarise(NumCountries = n_distinct(CountryName),
+            NumYears     = n_distinct(Year),
+            FirstYear    = min(Year),
+            LastYear     = max(Year))
+
+# Note - $ being replaced with dollar to avoid MathJax issue
+counts$IndicatorName <- gsub("\\$", "dollar", counts$IndicatorName)
+print.table(counts)
+```
