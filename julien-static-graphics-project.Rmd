@@ -1,0 +1,56 @@
+---
+title: "36-315 Static Graphics Group Project, Spring 2017"
+author: "Group Number: 19, Names: Julien Naegeli, Alex Frazier, Johnny Wu, Maria Rodriguez: jnaegeli, afrazie1, johnnywu, mar1"
+date: "April 13, 2017"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+
+---
+
+
+```{r}
+library(dplyr)
+library(readr)
+
+indicators <- read_csv("../Indicators.csv")
+```
+
+```{r}
+# vector of variables of interest for subsetting
+variables_of_interest <- c("NY.GDP.PCAP.CN", "NY.GDP.MKTP.CN",
+                           "MS.MIL.XPND.GD.ZS", "SP.DYN.AMRT.FE",
+                           "SP.DYN.AMRT.MA", "SP.DYN.IMRT.IN", 
+                           "SP.DYN.CDRT.IN", "SP.DYN.CBRT.IN",
+                           "SP.POP.TOTL", "SE.ADT.LITR.ZS", 
+                           "BX.GSR.GNFS.CD", "BM.GSR.GNFS.CD",
+                           "IC.FRM.CORR.ZS")
+
+# Get unique country names for subsetting
+unique_country_names <- unique(indicators$CountryName)
+world_powers <- c("United States", "China", "Japan", "Germany", "France", 
+                  "United Kingdom", "Russian Federation")
+
+# The first 32 countries are regions that incorporate multiple countries
+# For our purposes, we are only interested in the individual countries
+actual_countries <- unique_country_names[33:length(unique_country_names)]
+
+# Subset data based on country and variable
+world_df <- subset(indicators, 
+                   IndicatorCode %in% variables_of_interest &
+                   CountryName %in% actual_countries)
+
+# Add new columns
+world_df <- mutate(world_df,
+                   is_world_power = ifelse(CountryName %in% world_powers, 
+                                           "Yes", "No"))
+```
+
+
+
+
+
+
+
