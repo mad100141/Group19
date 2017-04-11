@@ -63,22 +63,22 @@ south_america <- gdp_mortality_debt_allCountry %>%
          CountryName == "Suriname" )
 
 
-gdpL <- filter(gdp_mortality_debt_allCountry, IndicatorName == "GDP (current LCU)")
-nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt, total (% of GDP)")
+gdpL <- filter(south_america, IndicatorName == "GDP (current LCU)")
+nationalDebt <- filter(south_america, IndicatorName == "Central government debt, total (% of GDP)")
 
-ggplot(south_america, aes("Central government debt, total (% of GDP", "Military expenditure")) + geom_point() + 
+ggplot(nationalDebt, aes(x = "Central government debt, total (% of GDP)", y = "Military expenditure")) + geom_point() + 
   labs(
     title = "Government Debt vs Military Expenditure",
     x = "Central government debt total (% of GDP)",
     y = "Military expenditure (% of GDP)"
-  ) + theme_dark() + scale_color_brewer(palette = "RdYlBu")
+  )
 
-ggplot(south_america, aes("GDP (current LCU)", "Mortality rate, under-5 (per 1,000)")) + geom_point() + 
+ggplot(gdpL, aes("GDP (current LCU)", "Mortality rate, under-5 (per 1,000)")) + geom_bar() + 
   labs(
     title = "GDP vs Mortality Rate",
     x = "GDP (current LCU)",
     y = "Mortality rate, under-5 (per 1,000)"
-  ) + theme_dark() + scale_color_brewer(palette = "RdYlBu")
+  )
 
 
 ```
