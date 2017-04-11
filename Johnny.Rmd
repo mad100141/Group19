@@ -32,21 +32,24 @@ Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CN"
 names(Variables)[names(Variables)=="Value"] <- "GDP"
 
 #Mortality rate, under-5 (per 1,000)
+#Energy use (kg of oil equivalent per capita)
 Variables <- merge(Variables, filter(indicators, IndicatorCode=="EG.USE.PCAP.KG.OE" &  Year==2012), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "Mortality"
 
 GDPMortality <- Variables
 
 #Central government debt, total (% of GDP)
-Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.TAX.INTT.CN" &  Year==2012), by = 'CountryCode')
+Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.DOD.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables2)[names(Variables2)=="Value"] <- "Debt"
 
 #Military expenditure (% of GDP)
-Variables2 <- merge(Variables2, filter(indicators, IndicatorCode=="MS.MIL.XPND.GD.ZS" &  Year==2012), by = 'CountryCode')
+#Expenses (% of GDP)
+Variables2 <- merge(Variables2, filter(indicators, IndicatorCode=="GC.XPN.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables2)[names(Variables2)=="Value"] <- "Military"
 
 
 GDPMortality
+Variables2
 
 #countsCountry <- indicators %>%
 #  group_by(CountryCode, CountryName) %>%
@@ -97,19 +100,22 @@ gdpL <- filter(gdp_mortality_debt_allCountry, IndicatorName == "GDP (current LCU
 nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt, total (% of GDP)")
 
 #gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
-ggplot(GDPMortality, aes(x = GDP, y = Mortality)) + geom_point() + 
+
+#actually GDP^1/5 vs energy use in oil kg
+ggplot(GDPMortality, aes(x = GDP ^ (1/5), y = Mortality)) + geom_point() + 
   labs(
     title = "GDP vs Mortality",
     x = "GDP (current LCU)",
     y = "Mortality rate, under-5 (per 1,000)"
-  )
+  ) + geom_smooth()
 
+#actually debt vs expenses
 ggplot(Variables2, aes(x = Military, y = Debt)) + geom_point() + 
   labs(
     title = "Military Expenditure vs Government Debt",
-    x = "GDP (current LCU)",
-    y = "Mortality rate, under-5 (per 1,000)"
-  )
+    x = "Military expenditure (% of GDP)",
+    y = "Central government debt, total (% of GDP)"
+  ) + geom_smooth()
 #ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
 #  labs(
 #    title = "Government Debt over the years",
