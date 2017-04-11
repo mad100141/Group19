@@ -17,23 +17,50 @@ library(readr)
 library(ggplot2)
 
 indicators <- read_csv("../Indicators.csv")
+indicators
 indicators <- select(indicators, CountryCode, IndicatorCode, Value, Year)
+indicators
 Countries <- read_csv("../Country.csv")
+Countries
 Countries <- select(Countries, CountryCode, ShortName)
+Countries
+```
 
-countsCountry <- indicators %>%
-  group_by(CountryCode, CountryName) %>%
-  summarise(NumIndicators = n_distinct(IndicatorName),
-            NumYears      = n_distinct(Year),
-            FirstYear     = min(Year),
-            LastYear      = max(Year))
+```{r}
+#GDP (current LCU)
+Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CN" &  Year==2012 & Value > 1e+3), by = 'CountryCode')
+names(Variables)[names(Variables)=="Value"] <- "GDP"
 
-countsIndicate <- indicators %>%
-  group_by(IndicatorCode, IndicatorName) %>%
-  summarise(NumCountries = n_distinct(CountryName),
-            NumYears     = n_distinct(Year),
-            FirstYear    = min(Year),
-            LastYear     = max(Year))
+#Mortality rate, under-5 (per 1,000)
+Variables <- merge(Variables, filter(indicators, IndicatorCode=="EG.USE.PCAP.KG.OE" &  Year==2012), by = 'CountryCode')
+names(Variables)[names(Variables)=="Value"] <- "Mortality"
+
+GDPMortality <- Variables
+
+#Central government debt, total (% of GDP)
+Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.TAX.INTT.CN" &  Year==2012), by = 'CountryCode')
+names(Variables2)[names(Variables2)=="Value"] <- "Debt"
+
+#Military expenditure (% of GDP)
+Variables2 <- merge(Variables2, filter(indicators, IndicatorCode=="MS.MIL.XPND.GD.ZS" &  Year==2012), by = 'CountryCode')
+names(Variables2)[names(Variables2)=="Value"] <- "Military"
+
+
+GDPMortality
+
+#countsCountry <- indicators %>%
+#  group_by(CountryCode, CountryName) %>%
+#  summarise(NumIndicators = n_distinct(IndicatorName),
+#            NumYears      = n_distinct(Year),
+#            FirstYear     = min(Year),
+#            LastYear      = max(Year))
+
+#countsIndicate <- indicators %>%
+#  group_by(IndicatorCode, IndicatorName) %>%
+# summarise(NumCountries = n_distinct(CountryName),
+#            NumYears     = n_distinct(Year),
+#            FirstYear    = min(Year),
+#            LastYear     = max(Year))
 
 # Note - $ being replaced with dollar to avoid MathJax issue
 #counts$IndicatorName <- gsub("\\$", "dollar", counts$IndicatorName)
@@ -70,21 +97,32 @@ gdpL <- filter(gdp_mortality_debt_allCountry, IndicatorName == "GDP (current LCU
 nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt, total (% of GDP)")
 
 #gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
-
-
-ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
+ggplot(GDPMortality, aes(x = GDP, y = Mortality)) + geom_point() + 
   labs(
-    title = "Government Debt over the years",
-    x = "Central government debt total (% of GDP)",
-    y = "Year"
-  )
-
-ggplot(gdpL, aes(x = Year, y = Value)) + geom_point() + 
-  labs(
-    title = "GDP over the years",
+    title = "GDP vs Mortality",
     x = "GDP (current LCU)",
-    y = "Year"
+    y = "Mortality rate, under-5 (per 1,000)"
   )
+
+ggplot(Variables2, aes(x = Military, y = Debt)) + geom_point() + 
+  labs(
+    title = "Military Expenditure vs Government Debt",
+    x = "GDP (current LCU)",
+    y = "Mortality rate, under-5 (per 1,000)"
+  )
+#ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
+#  labs(
+#    title = "Government Debt over the years",
+#    x = "Central government debt total (% of GDP)",
+#    y = "Year"
+#  )
+
+#ggplot(gdpL, aes(x = Year, y = Value)) + geom_point() + 
+#  labs(
+#    title = "GDP over the years",
+#    x = "GDP (current LCU)",
+#    y = "Year"
+#  )
 ```
 
 
