@@ -14,6 +14,10 @@ output:
 ```{r}
 library(dplyr)
 library(readr)
+# install.packages("sp", dependencies = T)
+# install.packages("ggmap")
+library(sp)
+library(ggmap)
 
 indicators <- read_csv("../Indicators.csv")
 ```
@@ -26,7 +30,9 @@ variables_of_interest <- c("NY.GDP.PCAP.CN", "NY.GDP.MKTP.CN",
                            "SP.DYN.CDRT.IN", "SP.DYN.CBRT.IN",
                            "SP.POP.TOTL", "SE.ADT.LITR.ZS", 
                            "BX.GSR.GNFS.CD", "BM.GSR.GNFS.CD",
-                           "IC.FRM.CORR.ZS")
+                           "IC.FRM.CORR.ZS", "SP.DYN.LE00.IN",
+                           "SL.UEM.TOTL.ZS", "NY.GNP.ATLS.CD", 
+                           "NY.GDP.MKTP.KD.ZG", "NY.GDP.MKTP.KD")
 
 # Get unique country names for subsetting
 unique_country_names <- unique(indicators$CountryName)
@@ -35,12 +41,67 @@ world_powers <- c("United States", "China", "Japan", "Germany", "France",
 
 # The first 32 countries are regions that incorporate multiple countries
 # For our purposes, we are only interested in the individual countries
-actual_countries <- unique_country_names[33:length(unique_country_names)]
+actual_countries <- setdiff(unique_country_names[33:length(unique_country_names)],
+                            c("Tuvalu", "Macao SAR, China", "Hong Kong SAR, China",
+                              "St. Kitts and Nevis", "Antigua and Barbuda", 
+                              "Trinidad and Tobago", "St. Vincent and the Grenadines", 
+                              "Channel Islands"))
 
 # Subset data based on country and variable
 world_df <- subset(indicators, 
                    IndicatorCode %in% variables_of_interest &
                    CountryName %in% actual_countries)
+
+# Recode country names to interact with world map
+world_df$CountryName <- recode(world_df$CountryName, 
+       "Bahamas, The" = "Bahamas", 
+       "Brunei Darussalam" = "Brunei",
+       "Cote d'Ivoire" = "Ivory Coast", 
+       "Congo, Dem. Rep." = "Democratic Republic of the Congo",
+       "Congo, Rep." = "Republic of Congo",
+       "Cabo Verde" = "Cape Verde", 
+       "Gambia, The" = "Gambia",
+       "Micronesia, Fed. Sts." = "Micronesia",
+       "Russian Federation" = "Russia",
+       "Egypt, Arab Rep." = "Egypt",
+       "Macedonia, FYR" = "Macedonia",
+       "Syrian Arab Republic" = "Syria",
+       "Faeroe Islands" = "Faroe Islands",
+       "Iran, Islamic Rep." = "Iran",
+       "Lao PDR" = "Laos",
+       "Slovak Republic" = "Slovakia",
+       "St. Martin (French part)" = "Saint Martin",
+       "Sint Maarten (Dutch part)" = "Sint Maarten",
+       "St. Lucia" = "Saint Lucia",
+       "Venezuela, RB" = "Venezuela",
+       "Korea, Dem. Rep." = "North Korea",
+       "Korea, Rep." = "South Korea",
+       "West Bank and Gaza" = "Palestine",
+       "Yemen, Rep." = "Yemen",
+       "Kyrgyz Republic" = "Kyrgyzstan")
+
+map_df <- map_data(map = "world")
+
+map_df$region <- recode(map_df$region, 
+                       "UK" = "United Kingdom",
+                       "USA" = "United States",
+                       "Virgin Islands" = "Virgin Islands (U.S.)")
+
+# unwanted <- c("Saint Barthelemy", "Anguilla", "Antarctica", "Martinique",
+#   "French Southern and Antarctic Lands", "Cook Islands", "Canary Islands", 
+#   "Falkland Islands", "Reunion", "Mayotte", "French Guiana", "Guadeloupe", 
+#   "Heard Island", "Cocos Islands", "Christmas Island", "Chagos Archipelago",
+#   "Siachen Glacier", "Montserrat", "Norfolk Island", "Niue", "Bonaire", 
+#   "Sint Eustatius", "Saba", "Nauru", "Pitcairn Islands", "Madeira Islands",
+#   "Azores", "Western Sahara", "South Sandwich Islands", "South Georgia", 
+#   "Saint Helena", "Ascension Island", "Saint Pierre and Miquelon",
+#   "Taiwan", "Wallis and Futuna", "Nevis", "Saint Kitts", "Antigua", "Barbuda", 
+#   "Trinidad", "Tobago", "Grenadines", "Saint Vincent", "Jersey", "Vatican",
+#   "Guernsey")
+# 
+# wanted_countries <- setdiff(unique(map_df$region), unwanted)
+# 
+# map_df <- subset(map_df, region %in% wanted_countries)
 
 # Add new columns
 world_df <- mutate(world_df,
@@ -48,9 +109,54 @@ world_df <- mutate(world_df,
                                            "Yes", "No"))
 ```
 
+```{r}
+full_country_df <- merge(w_2015_df, map_df, by.x = "CountryName", by.y = "region")
+library(xlsx)
+write.xlsx(mydata, "c:/mydata.xlsx")
+```
 
+```{r}
+#  [1] "SP.DYN.CBRT.IN"    "SP.DYN.CDRT.IN"    "SP.DYN.AMRT.FE"    "SP.DYN.AMRT.MA"   
+#  [5] "SP.DYN.IMRT.IN"    "SP.POP.TOTL"       "NY.GDP.MKTP.CN"    "NY.GDP.PCAP.CN"   
+#  [9] "SE.ADT.LITR.ZS"    "MS.MIL.XPND.GD.ZS" "IC.FRM.CORR.ZS"    "BX.GSR.GNFS.CD"   
+# [13] "BM.GSR.GNFS.CD"   "NY.GNP.ATLS.CD", "NY.GDP.MKTP.KD.ZG"
 
+w_2015_df <- subset(world_df, Year == 2007 & IndicatorCode == "NY.GDP.MKTP.KD")
+names(w_2015_df)[names(w_2015_df) == "CountryName"] <- "region"
+full_map_df <- merge(map_df, w_2015_df, by = "region",
+                     all.x = TRUE)
+#full_map_df$Value[is.na(full_map_df$Value)] <- "NA"
+```
 
+```{r}
+p3 <- ggplot(full_map_df[order(full_map_df$order),], aes(x = long, y = lat, group = group, fill = Value))
+p3 <- p3 + geom_polygon() + labs(title = "Life Expectancy at Birth by Country")+ 
+  scale_fill_gradient2(low = "yellow", high = "red", 
+                                     mid = "orange", midpoint = 60, name = "Average Year")+
+  jnaegeli_315_theme +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.title.y=element_blank(), legend.position = "bottom")
+p3
+```
+
+```{r}
+p3 <- ggplot(full_map_df[order(full_map_df$order),], aes(x = long, y = lat, group = group, fill = Value))
+p3 <- p3 + geom_polygon() + labs(title = "Gross Domestic Product by Country")+ 
+  scale_fill_gradient2(low = "yellow", high = "red", 
+                                     mid = "orange", midpoint = 1.8e+12, name = "GDP")+
+  jnaegeli_315_theme +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.title.y=element_blank(), legend.position = "bottom")
+p3
+```
 
 
 
