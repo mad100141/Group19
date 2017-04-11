@@ -17,57 +17,74 @@ library(readr)
 
 indicators <- read_csv("Indicators.csv")
 
-countsCountry <- indicators %>%
-  group_by(CountryCode, CountryName) %>%
-  summarise(NumIndicators = n_distinct(IndicatorName),
-            NumYears      = n_distinct(Year),
-            FirstYear     = min(Year),
-            LastYear      = max(Year))
-
-countsIndicate <- indicators %>%
-  group_by(IndicatorCode, IndicatorName) %>%
-  summarise(NumCountries = n_distinct(CountryName),
-            NumYears     = n_distinct(Year),
-            FirstYear    = min(Year),
-            LastYear     = max(Year))
-
-# Note - $ being replaced with dollar to avoid MathJax issue
-#counts$IndicatorName <- gsub("\\$", "dollar", counts$IndicatorName)
-#print.table(counts)
-```
-
-Graphings
-```{r}
 library(RColorBrewer)
 
-south_america_all <- indicators %>%
-  filter(CountryName == "Brazil" |
-         CountryName == "Argentina" | 
-         CountryName == "Paraguay" | 
-         CountryName == "Uruguay" |
-         CountryName == "Chile" | 
-         CountryName == "Bolivia" | 
-         CountryName == "Peru" | 
-         CountryName == "Ecuador" | 
-         CountryName == "Colombia" | 
-         CountryName == "Venezuela" | 
-         CountryName == "Guyana" | 
-         CountryName == "Suriname")
+world_powers <- c("United States", "China", "Japan", "Germany", "France", 
+                  "United Kingdom", "Russian Federation")
 
-south_america_employ <- south_america_all %>%
-  group_by(CountryName, Year) %>%
-  filter(IndicatorName == "Unemployment, total (% of total labor force)")
+world_powers_world <- c("United States", "China", "Japan", "Germany", "France", 
+                  "United Kingdom", "Russian Federation", "World")
 
-south_america_employ <- south_america_all %>%
-  group_by(CountryName, Year) %>%
-  filter(IndicatorName == "Unemployment, total (% of total labor force)")
+indicate_M <- c("GDP (current LCU)", "GDP (constant LCU)", 
+                "GDP per capita (current LCU)", "GDP per capita (constant LCU)", 
+                "GDP per capita growth (annual %)")
 
-ggplot(south_america_employ, aes(x = Year, y = Value, color = CountryName)) + geom_line(size = 1.5) + 
-  theme_dark() + labs(x = "Years", y = "Unemployment Rate, (% of total labor force)", 
-                          title = "Unemployment Rate in South American Countries from 1990 to 2015") + 
-  scale_color_brewer(palette = "RdYlBu")
+world_power_M <- indicators %>%
+  filter(CountryName %in% world_powers)
+
+world_power_MM <- indicators %>%
+  filter(CountryName %in% world_powers_world)
+
+world_gdps <- world_power_M %>% 
+  filter(IndicatorName %in% indicate_M)
+
+world_gdps_MM <- world_power_MM %>% 
+  filter(IndicatorName %in% indicate_M)
+
+gdp_all <- world_gdps_MM %>% filter(IndicatorName == "GDP per capita growth (annual %)")
+
+a <- world_gdps %>% filter(IndicatorName == "GDP (current LCU)")
+aa <- indicators %>% filter(IndicatorName == "GDP (current LCU)")
+
+b <- world_gdps %>% filter(IndicatorName == "GDP (constant LCU)")
+c <- world_gdps %>% filter(IndicatorName == "GDP per capita (current LCU)")
+d <- world_gdps %>% filter(IndicatorName == "GDP per capita (constant LCU)")
+e <- world_gdps %>% filter(IndicatorName == "GDP per capita growth (annual %)")
+
+aaa <- aa %>% mutate(other = CountryName )
+
+library(scales)
+library(ggplot2)
+#Time Series Graph of GDP Per Capita Growth % of World Powers and World
+ggplot(gdp_all, aes(x = Year, y = Value, color = CountryName)) + geom_line(size = 1.2) + 
+  theme_linedraw() + scale_color_brewer(palette = "Dark2") + 
+  labs(x = "Years from 1960 to 2015", y = "GDP per capita growth (annual %)", 
+       title = "Annual % of GDP per capita growth of World Powers and World") + 
+  scale_x_continuous(breaks=pretty_breaks(n=15)) + 
+  scale_y_continuous(breaks=pretty_breaks(n=10)) 
+  
+```
+
+```{r}
+
+world_muerte <- world_power_MM %>% 
+  filter(IndicatorName == "Death rate, crude (per 1,000 people)")
+
+ggplot(world_muerte, aes(x = Year, y = Value, color = CountryName)) + geom_line()
+
+world_pobreza <- world_power_M %>%
+  filter(IndicatorName == "GINI index (World Bank estimate)")
+
+pairs <- c("Death rate, crude (per 1,000 people)", "GINI index (World Bank estimate)")
+
+world_df <- subset(indicators,
+                   IndicatorName %in% pairs &
+                   CountryName %in% world_powers)
+
+#Grid Maps of Mortality Rate
 
 ```
+
 
 
 
