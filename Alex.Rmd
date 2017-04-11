@@ -55,6 +55,8 @@ dend <- Vars %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
 ggplot(dend) + theme_dendro() + expand_limits(y = -4.5)
 ```
 
+This is a Dendrogram of Countries based on the continuos variables Unemployment Rate, GDP, Military expenditure, Life expectancy at birth and Exports of goods and services. The powers are colored in yellow. 
+
 
 
 ```{r}
@@ -74,7 +76,7 @@ ggplot(IncomeHeldByTop20, aes(x = IncomeTop20)) + geom_density() +
        x = "% of Income Held by the Highest 20%")
 
 ```
-
+This is a density plot of each country'sshare of wealth held by the top 20%, each density curve corresponds to the countries for one continent. This graph shows that Central America and North America have the largest concentration of countries with high shares of wealth being held by the top 20%.
 
 
 
