@@ -14,8 +14,12 @@ output:
 ```{r}
 library(dplyr)
 library(readr)
+library(ggplot2)
 
-indicators <- read_csv("Indicators.csv")
+indicators <- read_csv("../Indicators.csv")
+indicators <- select(indicators, CountryCode, IndicatorCode, Value, Year)
+Countries <- read_csv("../Country.csv")
+Countries <- select(Countries, CountryCode, ShortName)
 
 countsCountry <- indicators %>%
   group_by(CountryCode, CountryName) %>%
@@ -44,8 +48,8 @@ gdp_mortality_debt_allCountry <- indicators %>%
          IndicatorName == "Mortality rate, under-5 (per 1,000)" | 
          IndicatorName == "Central government debt, total (% of GDP)" | 
          IndicatorName == "Military expenditure (% of GDP)")
-
-
+```
+```{r}
 
 south_america <- gdp_mortality_debt_allCountry %>%
   filter(CountryName == "Brazil" |
@@ -65,12 +69,30 @@ south_america <- gdp_mortality_debt_allCountry %>%
 gdpL <- filter(gdp_mortality_debt_allCountry, IndicatorName == "GDP (current LCU)")
 nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt, total (% of GDP)")
 
+#gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
 
 
+ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
+  labs(
+    title = "Government Debt over the years",
+    x = "Central government debt total (% of GDP)",
+    y = "Year"
+  )
+
+ggplot(gdpL, aes(x = Year, y = Value)) + geom_point() + 
+  labs(
+    title = "GDP over the years",
+    x = "GDP (current LCU)",
+    y = "Year"
+  )
 ```
 
 
+1st Graph:
+The graph shows National Debt for the Central government of countries. There does not seem to be any sort of trend, suggesting that debt is independent of time. There seems to be an equilibrium between the accruation and spending of money for these country governments
 
+2nd Graph:
+This graph shows GDP over time. It seems that as time increases, GDP does as well. This is because as countries interact, mutual benefits and trades will allow each country to grow richer in GDP.
 
 
 
