@@ -1,0 +1,80 @@
+---
+title: "36-315"
+author: "Group Number: 19, Names: Julien Naegeli, Alex Frazier, Johnny Wu, Maria Rodriguez: jnaegeli, afrazie1, johnnywu, mar1"
+date: "Due Monday"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+
+---
+
+
+```{r, warning=F, message=F}
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(dendextend)
+#dendrogram of 	Unemployment total (% of total labor force),GDP (current LCU), Military expenditure (current LCU), Life expectancy at birth total (years), Exports of goods and services (BoP, current USdollar))
+#hclust
+#2nd categorical government type and gdp over the years.
+indicators <- read_csv("Indicators.csv")
+indicators <- select(indicators, CountryCode, IndicatorCode, Value, Year)
+Countries <- read_csv("Country.csv")
+Countries <- select(Countries, CountryCode, ShortName)
+CountrieswVars <-  merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CN" &  Year==2013 & Value > 1e+12), by = 'CountryCode')
+names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "GDP"
+CountrieswVars
+# CountrieswVars <-  merge(CountrieswVars, filter(indicators, IndicatorCode=="NY.GDP.PCAP.CN" &  Year==2013), by = 'CountryCode')
+# names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "GDPPerCapita"
+CountrieswVars <-  merge(CountrieswVars, filter(indicators, IndicatorCode=="MS.MIL.XPND.CN" &  Year==2013), by = 'CountryCode')
+names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "Military"
+CountrieswVars <-  merge(CountrieswVars, filter(indicators, IndicatorCode=="SL.UEM.TOTL.ZS" &  Year==2013), by = 'CountryCode')
+names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "Unemployment"
+CountrieswVars <-  merge(CountrieswVars, filter(indicators, IndicatorCode=="NE.EXP.GNFS.KN" &  Year==2013), by = 'CountryCode')
+names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "LifeExpectancy"
+CountrieswVars <-  merge(CountrieswVars, filter(indicators, IndicatorCode=="BX.GSR.GNFS.CD" &  Year==2013), by = 'CountryCode')
+names(CountrieswVars)[names(CountrieswVars)=="Value"] <- "Exports"
+CountrieswVars <- CountrieswVars[ , !duplicated(colnames(CountrieswVars))]
+CountrieswVars <- select(CountrieswVars, ShortName, CountryCode, GDP, Military, Unemployment, LifeExpectancy, Exports)
+world_powers <- c("United States", "China", "Japan", "Germany", "France", 
+                  "United Kingdom", "Russian Federation")
+CountrieswVars$SuperPower <- CountrieswVars$ShortName %in% c("United States", "China", "Japan", "Germany", "France", "United Kingdom", "Russia")
+CountrieswVars
+Vars  <- select(CountrieswVars, GDP, Military, Unemployment, LifeExpectancy, Exports)
+#VarsTest  <- select(Vars, GDP, Exports)
+colorblind_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+get_colors <- function(x, palette = colorblind_palette) palette[match(x, unique(x))]
+dend <- Vars %>% scale %>% dist %>% hclust %>% as.dendrogram %>% 
+  set("labels", CountrieswVars$ShortName, order_value = TRUE) %>%
+  set("labels_cex", .7) %>%    
+  set("labels_col", get_colors(CountrieswVars$SuperPower), order_value = TRUE)  
+
+                      
+ggplot(dend) + theme_dendro() + expand_limits(y = -4.5)
+```
+
+
+
+```{r}
+countryInfo <- read_csv('countries-governmentIncluded.csv')
+countryInfo
+CountrieswGovts <- merge(CountrieswVars, countryInfo, by.x = "ShortName", by.y = "Country (en)") 
+CountrieswGovts <- plyr::rename(CountrieswGovts, c("Government form"="government"))
+CountrieswGovts
+IncomeHeldByTop20 <- merge(Countries, filter(indicators, IndicatorCode=="SI.DST.05TH.20" &  Year==2012), by = 'CountryCode')
+IncomeHeldByTop20
+IncomeHeldByTop20 <- merge(IncomeHeldByTop20, countryInfo, by.x = "ShortName", by.y = "Country (en)") 
+names(IncomeHeldByTop20)[names(IncomeHeldByTop20)=="Value"] <- "IncomeTop20"
+ggplot(IncomeHeldByTop20, aes(x = IncomeTop20)) + geom_density() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_density(aes(fill=Continent), position="dodge", alpha = .6) +
+  labs(fill = 'Continent', title = "Wealth Concentration Across Continents",
+       x = "% of Income Held by the Highest 20%")
+
+```
+
+
+
+
