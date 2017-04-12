@@ -14,10 +14,10 @@ output:
 ```{r}
 library(dplyr)
 library(readr)
-
-indicators <- read_csv("Indicators.csv")
-
 library(RColorBrewer)
+
+indicators <- read_csv("../Indicators.csv")
+
 
 world_powers <- c("United States", "China", "Japan", "Germany", "France", 
                   "United Kingdom", "Russian Federation")
@@ -53,15 +53,22 @@ e <- world_gdps %>% filter(IndicatorName == "GDP per capita growth (annual %)")
 
 aaa <- aa %>% mutate(other = CountryName )
 
+```
+
+Time Series Graph of GDP Per Capita Growth % of World Powers and World
+```{r}
 library(scales)
 library(ggplot2)
 #Time Series Graph of GDP Per Capita Growth % of World Powers and World
 ggplot(gdp_all, aes(x = Year, y = Value, color = CountryName)) + geom_line(size = 1.2) + 
   theme_linedraw() + scale_color_brewer(palette = "Dark2") + 
   labs(x = "Years from 1960 to 2015", y = "GDP per capita growth (annual %)", 
-       title = "Annual % of GDP per capita growth of World Powers and World") + 
+       title = "Annual % of GDP per capita growth of World Powers and World", 
+       color = "World Powers & World") + 
   scale_x_continuous(breaks=pretty_breaks(n=15)) + 
-  scale_y_continuous(breaks=pretty_breaks(n=10)) 
+  scale_y_continuous(breaks=pretty_breaks(n=10)) + 
+  theme(text = element_text(size = 12, family = "Palatino"), 
+        legend.title = element_text(size = 10))
   
 ```
 
@@ -70,24 +77,31 @@ ggplot(gdp_all, aes(x = Year, y = Value, color = CountryName)) + geom_line(size 
 world_muerte <- world_power_MM %>% 
   filter(IndicatorName == "Death rate, crude (per 1,000 people)")
 
-ggplot(world_muerte, aes(x = Year, y = Value, color = CountryName)) + geom_line()
+countryInfo <- read_csv('countries-governmentIncluded.csv')
 
-world_pobreza <- world_power_M %>%
-  filter(IndicatorName == "GINI index (World Bank estimate)")
+#countryWithPower <- mutate(countryInfo, if(Country %in Continent = Country))
+
+ggplot(countryInfo, aes(x = Deathrate, y = Birthrate, color = Continent)) + geom_point() + 
+  theme_linedraw() + labs(x = "Death Rate, crude (per 1,000 people)", 
+                          y = "Birthratem, crude (per 1,000 people)", 
+                          title = "Death Rate vs Birth Rate By Continent")
+
+
+ggplot(world_muerte, aes(x = Year, y = Value, color = CountryName)) + 
+  geom_line(size = 1.2) + 
+  theme_linedraw() + labs(x = "Years from 1960 to 2013", y = "Death Rate, crude (per 1,000 people)", 
+                          color = "World Powers & World", 
+                          title = "World Powers Death Rates Over Time") + 
+  scale_color_brewer(palette = "Dark2") +
+  scale_x_continuous(breaks=pretty_breaks(n=15)) + 
+  scale_y_continuous(breaks=pretty_breaks(n=10)) + 
+  theme(text = element_text(size = 14, family = "Palatino"), 
+        legend.title = element_text(size = 10))
+ 
+
 
 pairs <- c("Death rate, crude (per 1,000 people)", "GINI index (World Bank estimate)")
-
-world_df <- subset(indicators,
-                   IndicatorName %in% pairs &
-                   CountryName %in% world_powers)
 
 #Grid Maps of Mortality Rate
 
 ```
-
-
-
-
-
-
-
