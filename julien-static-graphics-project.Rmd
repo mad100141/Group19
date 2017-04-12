@@ -120,6 +120,13 @@ write.xlsx(mydata, "c:/mydata.xlsx")
 #  [5] "SP.DYN.IMRT.IN"    "SP.POP.TOTL"       "NY.GDP.MKTP.CN"    "NY.GDP.PCAP.CN"   
 #  [9] "SE.ADT.LITR.ZS"    "MS.MIL.XPND.GD.ZS" "IC.FRM.CORR.ZS"    "BX.GSR.GNFS.CD"   
 # [13] "BM.GSR.GNFS.CD"   "NY.GNP.ATLS.CD", "NY.GDP.MKTP.KD.ZG"
+jnaegeli_315_theme <-  theme_bw() + 
+  theme(
+    axis.text = element_text(size = 10, family = "Calibri", 
+                                 color = "royalblue4"),
+        text = element_text(size = 14, family = "Calibri",
+                            face = "bold", color = "grey30"))
+
 
 w_2015_df <- subset(world_df, Year == 2007 & IndicatorCode == "NY.GDP.MKTP.KD")
 names(w_2015_df)[names(w_2015_df) == "CountryName"] <- "region"
@@ -144,10 +151,23 @@ p3
 ```
 
 ```{r}
-p3 <- ggplot(full_map_df[order(full_map_df$order),], aes(x = long, y = lat, group = group, fill = Value))
-p3 <- p3 + geom_polygon() + labs(title = "Gross Domestic Product by Country")+ 
-  scale_fill_gradient2(low = "yellow", high = "red", 
-                                     mid = "orange", midpoint = 1.8e+12, name = "GDP")+
+library("PBSmapping")
+library("data.table")
+full_map_df <- merge(map_df, w_2015_df, by = "region",
+                     all.x = TRUE)
+# xlim <- c(min(full_map_df$long), max(full_map_df$long))
+# ylim <- c(max(full_map_df$lat), max(full_map_df$lat))
+xlim = c(-165,-90)
+ylim = c(10,60)
+full_map_df <- full_map_df[order(full_map_df$order),]
+setnames(full_map_df, c("region","X","Y","PID","POS","subregion", "CountryCode", "IndicatorName", "IndicatorCode", "Year", "Value", "is_world_power"))
+# full_map_df <- clipPolys(full_map_df, xlim = xlim, ylim = ylim, keepExtra = T)
+p3 <- ggplot(full_map_df, aes(x = X, y = Y, group = PID, fill = log(Value))) +
+  geom_polygon() + coord_fixed() + coord_map(projection = "mollweide") +
+  labs(title = "Log Gross Domestic Product by Country") +
+  scale_fill_gradient2(low = "green", high = "green4",
+                                     mid = "green2", midpoint = 25,
+                       name = "Log GDP")+
   jnaegeli_315_theme +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),

@@ -17,11 +17,8 @@ library(readr)
 library(ggplot2)
 
 indicators <- read_csv("../Indicators.csv")
-indicators
 indicators <- select(indicators, CountryCode, IndicatorCode, Value, Year)
-indicators
 Countries <- read_csv("../Country.csv")
-Countries
 Countries <- select(Countries, CountryCode, ShortName)
 Countries
 ```
@@ -42,28 +39,24 @@ GDPMortality <- Variables
 Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.DOD.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables2)[names(Variables2)=="Value"] <- "Debt"
 
-#Military expenditure (% of GDP)
-#Expenses (% of GDP)
-Variables2 <- merge(Variables2, filter(indicators, IndicatorCode=="GC.XPN.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
-names(Variables2)[names(Variables2)=="Value"] <- "Military"
+#Expense (% of GDP)
+Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.XPN.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
+names(Variables2)[names(Variables2)=="Value"] <- "Expense"
 
 
-GDPMortality
-Variables2
+countsCountry <- indicators %>%
+  group_by(CountryCode, CountryName) %>%
+  summarise(NumIndicators = n_distinct(IndicatorName),
+            NumYears      = n_distinct(Year),
+            FirstYear     = min(Year),
+            LastYear      = max(Year))
 
-#countsCountry <- indicators %>%
-#  group_by(CountryCode, CountryName) %>%
-#  summarise(NumIndicators = n_distinct(IndicatorName),
-#            NumYears      = n_distinct(Year),
-#            FirstYear     = min(Year),
-#            LastYear      = max(Year))
-
-#countsIndicate <- indicators %>%
-#  group_by(IndicatorCode, IndicatorName) %>%
-# summarise(NumCountries = n_distinct(CountryName),
-#            NumYears     = n_distinct(Year),
-#            FirstYear    = min(Year),
-#            LastYear     = max(Year))
+countsIndicate <- indicators %>%
+  group_by(IndicatorCode, IndicatorName) %>%
+  summarise(NumCountries = n_distinct(CountryName),
+            NumYears     = n_distinct(Year),
+            FirstYear    = min(Year),
+            LastYear     = max(Year))
 
 # Note - $ being replaced with dollar to avoid MathJax issue
 #counts$IndicatorName <- gsub("\\$", "dollar", counts$IndicatorName)
@@ -101,6 +94,7 @@ nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central 
 
 #gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
 
+
 #actually GDP^1/4 vs num of physicians
 ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality)) + geom_point() + 
   labs(
@@ -109,8 +103,8 @@ ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality)) + geom_point() +
     y = "Physicians (per 1,000 people)"
   ) + geom_smooth()
 
-#actually debt vs expenses
-ggplot(Variables2, aes(x = Military, y = Debt)) + geom_point() + 
+
+ggplot(Variables2, aes(x = Debt, y = Expense)) + geom_point() + 
   labs(
     title = "Government Expenses vs Government Debt",
     x = "Expenses (% of GDP)",
