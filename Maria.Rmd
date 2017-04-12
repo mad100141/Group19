@@ -10,7 +10,6 @@ output:
 
 ---
 
-
 ```{r}
 library(dplyr)
 library(readr)
@@ -79,8 +78,6 @@ world_muerte <- world_power_MM %>%
 
 countryInfo <- read_csv('countries-governmentIncluded.csv')
 
-#countryWithPower <- mutate(countryInfo, if(Country %in Continent = Country))
-
 ggplot(countryInfo, aes(x = Deathrate, y = Birthrate, color = Continent)) + geom_point() + 
   theme_linedraw() + labs(x = "Death Rate, crude (per 1,000 people)", 
                           y = "Birthratem, crude (per 1,000 people)", 
@@ -97,11 +94,6 @@ ggplot(world_muerte, aes(x = Year, y = Value, color = CountryName)) +
   scale_y_continuous(breaks=pretty_breaks(n=10)) + 
   theme(text = element_text(size = 14, family = "Palatino"), 
         legend.title = element_text(size = 10))
- 
-
 
 pairs <- c("Death rate, crude (per 1,000 people)", "GINI index (World Bank estimate)")
-
-#Grid Maps of Mortality Rate
-
 ```
