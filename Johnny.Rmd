@@ -25,12 +25,11 @@ Countries
 
 ```{r}
 #GDP (current LCU)
-Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CN" &  Year==2012 & Value > 1e+3), by = 'CountryCode')
+Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CD" &  Year==2012 & Value > 1e+3), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "GDP"
 
-#Mortality rate, under-5 (per 1,000)
-#Energy use (kg of oil equivalent per capita)
-Variables <- merge(Variables, filter(indicators, IndicatorCode=="SH.MED.PHYS.ZS" &  Year==2012), by = 'CountryCode')
+#Survival rate to the last grade of primary education, both sexes (%)
+Variables <- merge(Variables, filter(indicators, IndicatorCode=="SE.PRM.PRSL.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "Mortality"
 
 GDPMortality <- Variables
@@ -96,20 +95,22 @@ nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central 
 
 
 #actually GDP^1/4 vs num of physicians
-ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality)) + geom_point() + 
+ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point() + 
   labs(
-    title = "GDP vs Physician Count",
+    title = "GDP vs Primary Education Survival Rate",
     x = "GDP (current US Dollar)",
-    y = "Physicians (per 1,000 people)"
-  ) + geom_smooth()
+    y = "Survival rate to the last grade of primary education, both sexes (%)"
+  ) + geom_smooth() +
+  geom_text(data=subset(GDPMortality, GDP ^ (1/4) > 5000))
 
 
-ggplot(Variables2, aes(x = Expense, y = Debt)) + geom_point() + 
+ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point() + 
   labs(
     title = "Government Expenses vs Government Debt",
     x = "Expenses (% of GDP)",
     y = "Central government debt, total (% of GDP)"
-  ) + geom_smooth()
+  ) + geom_smooth() +
+  geom_text(data=subset(Variables2, Debt > 150))
 #REMEMBER TO LABEL OUTLIER POINTS AND COLOR THE POINTS AS WELL
 
 #ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
