@@ -33,7 +33,7 @@ names(Variables)[names(Variables)=="Value"] <- "GDP"
 
 #Mortality rate, under-5 (per 1,000)
 #Energy use (kg of oil equivalent per capita)
-Variables <- merge(Variables, filter(indicators, IndicatorCode=="EG.USE.PCAP.KG.OE" &  Year==2012), by = 'CountryCode')
+Variables <- merge(Variables, filter(indicators, IndicatorCode=="SH.MED.PHYS.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "Mortality"
 
 GDPMortality <- Variables
@@ -101,21 +101,23 @@ nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central 
 
 #gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
 
-#actually GDP^1/5 vs energy use in oil kg
-ggplot(GDPMortality, aes(x = GDP ^ (1/5), y = Mortality)) + geom_point() + 
+#actually GDP^1/4 vs num of physicians
+ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality)) + geom_point() + 
   labs(
-    title = "GDP vs Mortality",
-    x = "GDP (current LCU)",
-    y = "Mortality rate, under-5 (per 1,000)"
+    title = "GDP vs Physician Count",
+    x = "GDP (current US Dollar)",
+    y = "Physicians (per 1,000 people)"
   ) + geom_smooth()
 
 #actually debt vs expenses
 ggplot(Variables2, aes(x = Military, y = Debt)) + geom_point() + 
   labs(
-    title = "Military Expenditure vs Government Debt",
-    x = "Military expenditure (% of GDP)",
+    title = "Government Expenses vs Government Debt",
+    x = "Expenses (% of GDP)",
     y = "Central government debt, total (% of GDP)"
   ) + geom_smooth()
+#REMEMBER TO LABEL OUTLIER POINTS AND COLOR THE POINTS AS WELL
+
 #ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
 #  labs(
 #    title = "Government Debt over the years",
