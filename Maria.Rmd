@@ -10,6 +10,7 @@ output:
 
 ---
 
+
 ```{r}
 library(dplyr)
 library(readr)
@@ -93,7 +94,7 @@ ggplot(world_muerte, aes(x = Year, y = Value, color = CountryName)) +
   scale_x_continuous(breaks=pretty_breaks(n=15)) + 
   scale_y_continuous(breaks=pretty_breaks(n=10)) + 
   theme(text = element_text(size = 14, family = "Palatino"), 
-        legend.title = element_text(size = 10))
+        legend.title = element_text(size = 10)) + guides(color = FALSE)
 
 pairs <- c("Death rate, crude (per 1,000 people)", "GINI index (World Bank estimate)")
 ```
