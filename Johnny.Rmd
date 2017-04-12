@@ -40,23 +40,23 @@ Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.DOD.TOTL.GD
 names(Variables2)[names(Variables2)=="Value"] <- "Debt"
 
 #Expense (% of GDP)
-Variables2 <- merge(Countries, filter(indicators, IndicatorCode=="GC.XPN.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
+Variables2 <- merge(Variables2, filter(indicators, IndicatorCode=="GC.XPN.TOTL.GD.ZS" &  Year==2012), by = 'CountryCode')
 names(Variables2)[names(Variables2)=="Value"] <- "Expense"
 
 
-countsCountry <- indicators %>%
-  group_by(CountryCode, CountryName) %>%
-  summarise(NumIndicators = n_distinct(IndicatorName),
-            NumYears      = n_distinct(Year),
-            FirstYear     = min(Year),
-            LastYear      = max(Year))
+#countsCountry <- indicators %>%
+#  group_by(CountryCode, CountryName) %>%
+#  summarise(NumIndicators = n_distinct(IndicatorName),
+#            NumYears      = n_distinct(Year),
+##            FirstYear     = min(Year),
+#            LastYear      = max(Year))
 
-countsIndicate <- indicators %>%
-  group_by(IndicatorCode, IndicatorName) %>%
-  summarise(NumCountries = n_distinct(CountryName),
-            NumYears     = n_distinct(Year),
-            FirstYear    = min(Year),
-            LastYear     = max(Year))
+#countsIndicate <- indicators %>%
+#  group_by(IndicatorCode, IndicatorName) %>%
+#  summarise(NumCountries = n_distinct(CountryName),
+#            NumYears     = n_distinct(Year),
+#            FirstYear    = min(Year),
+#            LastYear     = max(Year))
 
 # Note - $ being replaced with dollar to avoid MathJax issue
 #counts$IndicatorName <- gsub("\\$", "dollar", counts$IndicatorName)
@@ -104,7 +104,7 @@ ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality)) + geom_point() +
   ) + geom_smooth()
 
 
-ggplot(Variables2, aes(x = Debt, y = Expense)) + geom_point() + 
+ggplot(Variables2, aes(x = Expense, y = Debt)) + geom_point() + 
   labs(
     title = "Government Expenses vs Government Debt",
     x = "Expenses (% of GDP)",
