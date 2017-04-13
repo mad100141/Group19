@@ -31,8 +31,8 @@ Countries
 Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CD" &  Year==2012 & Value > 1e+3), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "GDP"
 
-#Life expectancy at birth, total (years)
-Variables <- merge(Variables, filter(indicators, IndicatorCode=="SP.DYN.LE00.IN" &  Year==2012), by = 'CountryCode')
+#Birth rate (per 1,000 people)
+Variables <- merge(Variables, filter(indicators, IndicatorCode=="SP.DYN.CBRT.IN" &  Year==2012), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "Mortality"
 
 GDPMortality <- Variables
@@ -102,12 +102,12 @@ jnaegeli_315_theme <-  theme_bw() +
         text = element_text(size = 14, family = "Palatino",
                             face = "bold", color = "grey30"))
 
-#actually GDP^1/4 vs Life expectancy at birth, total (years)
+#actually GDP^1/4 vs Birth rate (per 1,000 people)
 ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point(aes(color = world_power)) + 
   labs(
-    title = "GDP vs Life Expectancy",
+    title = "GDP vs Birth Rate",
     x = "(GDP)^(1/4) (current US Dollar)",
-    y = "Life expectancy at birth (years)",
+    y = "Birth Rate (per 1,000 people)",
     color = "World Power Status"
   ) + geom_smooth() + jnaegeli_315_theme + theme(legend.position="bottom")
 
@@ -142,7 +142,7 @@ ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(a
 
 
 1st Graph:
-The graph shows life expectancy versus a country's GDP^(1/4). It seems that there is a general upward trend, as a Country's GDP rises, the life expectancy will increase. This is due in part to better healthcare in richer nations. In fact, five out of the seven world powers have life expectancies above the trend line, while one is on and one is below the line. Even if some of the world powers do not have the highest GDP, most are at the top in regards to life expectancy.
+The graph shows a country's GDP^(1/4) versus the birth rate. It seems that there is a general downward trend, as a Country's GDP rises, the birth rate will decrease. While the trend line may seem relatively horizontal, all of the world powers are under the trend line. World Powers are stronger, richer nations, so there is significance to the fact that all of them have low birth rates and are under the trend line. 
 
 2nd Graph:
 This graph shows a country's expenses versus its debt. As a country spends more, it owes more, increasing its debt. However, the more interesting details lie in the differences, and even lack of differences between the world powers and the rest of the countries. Most of the outliers and more extreme values come from non-world power nations. The only extreme value from a world power is Japan. Most of the world powers, while scattered from 0-100 debt-wise, tend to have lower expenses. However, it seems that without the extreme values, the top 20 nations are interspersed throughout the other nations without any visible group or correlation. This suggests that debt and expenses may play a smaller role in a country's wealth than previously thought. 
