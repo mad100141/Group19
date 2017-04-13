@@ -22,6 +22,7 @@ Countries <- read_csv("../Country.csv")
 Countries <- select(Countries, CountryCode, ShortName)
 Countries <- mutate(Countries, top_20 = ifelse(ShortName %in% c("Qatar", "Luxembourg", 
                                      "Singapore", "Brunei", "Kuwait", "Norway", "United Arab Emirates", "Hong Kong", "United States", "Switzerland", "Saudi Arabia", "Bahrain", "Netherlands", "Ireland", "Australia", "Austria", "Sweden", "Germany", "Taiwan", "Canada"), "Top 20 Richest Country", "Not Top 20"))
+Countries <- mutate(Countries, world_power = ifelse(ShortName %in% c("China", "Japan", "Russia", "United States", "Germany", "France", "United Kingdom"), "World Power", "Not World Power"))
 Countries
 ```
 
@@ -30,8 +31,8 @@ Countries
 Variables <- merge(Countries, filter(indicators, IndicatorCode=="NY.GDP.MKTP.CD" &  Year==2012 & Value > 1e+3), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "GDP"
 
-#Survival rate to the last grade of primary education, both sexes (%)
-Variables <- merge(Variables, filter(indicators, IndicatorCode=="SE.PRM.PRSL.ZS" &  Year==2012), by = 'CountryCode')
+#Life expectancy at birth, total (years)
+Variables <- merge(Variables, filter(indicators, IndicatorCode=="SP.DYN.LE00.IN" &  Year==2012), by = 'CountryCode')
 names(Variables)[names(Variables)=="Value"] <- "Mortality"
 
 GDPMortality <- Variables
@@ -101,25 +102,25 @@ jnaegeli_315_theme <-  theme_bw() +
         text = element_text(size = 14, family = "Palatino",
                             face = "bold", color = "grey30"))
 
-#actually GDP^1/4 vs primary education survival rate
-ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point(aes(color = top_20)) + 
+#actually GDP^1/4 vs Life expectancy at birth, total (years)
+ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point(aes(color = world_power)) + 
   labs(
-    title = "GDP vs Primary Education Survival Rate",
-    x = "GDP (current US Dollar)",
-    y = "Survival rate past primary education (%)",
-    color = "Country GDP per capita Ranking"
+    title = "GDP vs Life Expectancy",
+    x = "(GDP)^(1/4) (current US Dollar)",
+    y = "Life expectancy at birth (years)",
+    color = "World Power Status"
   ) + geom_smooth() + jnaegeli_315_theme + theme(legend.position="bottom")
 
 #+
   #geom_text(data=subset(GDPMortality, GDP ^ (1/4) > 2000), check_overlap = TRUE)
 
 
-ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(aes(color = top_20)) + 
+ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(aes(color = world_power)) + 
   labs(
     title = "Government Expenses vs Government Debt",
     x = "Expenses (% of GDP)",
-    y = "Central government debt, total (% of GDP)", 
-    color = "Country GDP per capita Ranking"
+    y = "Central government debt (% of GDP)", 
+    color = "World Power Status"
   ) + geom_smooth() +
   geom_text(data=subset(Variables2, Debt > 150)) + jnaegeli_315_theme + theme(legend.position="bottom")
 #REMEMBER TO LABEL OUTLIER POINTS AND COLOR THE POINTS AS WELL
@@ -141,9 +142,9 @@ ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(a
 
 
 1st Graph:
-The graph shows survival rate past primary education versus a country's GDP. It seems that there is a general upward trend, as a Country's GDP rises, a larger percentage of the population is able to survive past primary education. This is due in part to better healthcare in richer nations. It is also worth noting that all of the available datapoints for the top 20 richest countries by GDP per capita are near 100% survival rate. 
+The graph shows life expectancy versus a country's GDP^(1/4). It seems that there is a general upward trend, as a Country's GDP rises, the life expectancy will increase. This is due in part to better healthcare in richer nations. In fact, five out of the seven world powers have life expectancies above the trend line, while one is on and one is below the line. Even if some of the world powers do not have the highest GDP, most are at the top in regards to life expectancy.
 
 2nd Graph:
-This graph shows a country's expenses versus its debt. As a country spends more, it owes more, increasing its debt. However, the more interesting details lie in the differences, and even lack of differences between top 20 richest nations by GDP per capita and the rest of the countries. All of the outliers and more extreme values come from nations that are not in the top 20. Most of the top 20 nations, while scattered from 0-100 debt-wise, tend to have lower expenses. However, it seems that without the extreme values, the top 20 nations are evenly spaced between the other nations without any visible group or correlation. This suggests that debt and expenses may play a smaller role in a country's wealth than previously thought. 
+This graph shows a country's expenses versus its debt. As a country spends more, it owes more, increasing its debt. However, the more interesting details lie in the differences, and even lack of differences between the world powers and the rest of the countries. Most of the outliers and more extreme values come from non-world power nations. The only extreme value from a world power is Japan. Most of the world powers, while scattered from 0-100 debt-wise, tend to have lower expenses. However, it seems that without the extreme values, the top 20 nations are interspersed throughout the other nations without any visible group or correlation. This suggests that debt and expenses may play a smaller role in a country's wealth than previously thought. 
 
 
