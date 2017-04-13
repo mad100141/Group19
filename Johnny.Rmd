@@ -20,6 +20,8 @@ indicators <- read_csv("../Indicators.csv")
 indicators <- select(indicators, CountryCode, IndicatorCode, Value, Year)
 Countries <- read_csv("../Country.csv")
 Countries <- select(Countries, CountryCode, ShortName)
+Countries <- mutate(Countries, top_20 = ifelse(ShortName %in% c("Qatar", "Luxembourg", 
+                                     "Singapore", "Brunei", "Kuwait", "Norway", "United Arab Emirates", "Hong Kong", "United States", "Switzerland", "Saudi Arabia", "Bahrain", "Netherlands", "Ireland", "Australia", "Austria", "Sweden", "Germany", "Taiwan", "Canada"), "Top 20 Richest Country", "Not Top 20"))
 Countries
 ```
 
@@ -89,28 +91,37 @@ south_america <- gdp_mortality_debt_allCountry %>%
 
 
 gdpL <- filter(gdp_mortality_debt_allCountry, IndicatorName == "GDP (current LCU)")
-nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt, total (% of GDP)")
+nationalDebt <- filter(gdp_mortality_debt_allCountry, IndicatorName == "Central government debt (% of GDP)")
 
 #gdpL_nationalDebt <- merge(gdpL, nationalDebt, by.x = "CountryName")
+jnaegeli_315_theme <-  theme_bw() + 
+  theme(
+    axis.text = element_text(size = 10, family = "Palatino", 
+                                 color = "royalblue4"),
+        text = element_text(size = 14, family = "Palatino",
+                            face = "bold", color = "grey30"))
 
-
-#actually GDP^1/4 vs num of physicians
-ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point() + 
+#actually GDP^1/4 vs primary education survival rate
+ggplot(GDPMortality, aes(x = GDP ^ (1/4), y = Mortality, label = ShortName)) + geom_point(aes(color = top_20)) + 
   labs(
     title = "GDP vs Primary Education Survival Rate",
     x = "GDP (current US Dollar)",
-    y = "Survival rate to the last grade of primary education, both sexes (%)"
-  ) + geom_smooth() +
-  geom_text(data=subset(GDPMortality, GDP ^ (1/4) > 5000))
+    y = "Survival rate past primary education (%)",
+    color = "Country GDP per capita Ranking"
+  ) + geom_smooth() + jnaegeli_315_theme + theme(legend.position="bottom")
+
+#+
+  #geom_text(data=subset(GDPMortality, GDP ^ (1/4) > 2000), check_overlap = TRUE)
 
 
-ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point() + 
+ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(aes(color = top_20)) + 
   labs(
     title = "Government Expenses vs Government Debt",
     x = "Expenses (% of GDP)",
-    y = "Central government debt, total (% of GDP)"
+    y = "Central government debt, total (% of GDP)", 
+    color = "Country GDP per capita Ranking"
   ) + geom_smooth() +
-  geom_text(data=subset(Variables2, Debt > 150))
+  geom_text(data=subset(Variables2, Debt > 150)) + jnaegeli_315_theme + theme(legend.position="bottom")
 #REMEMBER TO LABEL OUTLIER POINTS AND COLOR THE POINTS AS WELL
 
 #ggplot(nationalDebt, aes(x = Year, y = Value)) + geom_point() + 
