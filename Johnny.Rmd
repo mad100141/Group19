@@ -141,10 +141,9 @@ ggplot(Variables2, aes(x = Expense, y = Debt, label = ShortName)) + geom_point(a
 
 
 1st Graph:
-The graph shows National Debt for the Central government of countries. There does not seem to be any sort of trend, suggesting that debt is independent of time. There seems to be an equilibrium between the accruation and spending of money for these country governments
+The graph shows survival rate past primary education versus a country's GDP. It seems that there is a general upward trend, as a Country's GDP rises, a larger percentage of the population is able to survive past primary education. This is due in part to better healthcare in richer nations. It is also worth noting that all of the available datapoints for the top 20 richest countries by GDP per capita are near 100% survival rate. 
 
 2nd Graph:
-This graph shows GDP over time. It seems that as time increases, GDP does as well. This is because as countries interact, mutual benefits and trades will allow each country to grow richer in GDP.
-
+This graph shows a country's expenses versus its debt. As a country spends more, it owes more, increasing its debt. However, the more interesting details lie in the differences, and even lack of differences between top 20 richest nations by GDP per capita and the rest of the countries. All of the outliers and more extreme values come from nations that are not in the top 20. Most of the top 20 nations, while scattered from 0-100 debt-wise, tend to have lower expenses. However, it seems that without the extreme values, the top 20 nations are evenly spaced between the other nations without any visible group or correlation. This suggests that debt and expenses may play a smaller role in a country's wealth than previously thought. 
 
 
